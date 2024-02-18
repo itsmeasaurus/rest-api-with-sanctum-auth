@@ -22,40 +22,34 @@ class AuthController extends Controller
             'password' => bcrypt($attributes['password'])
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        return $this->responseToken($user);
 
-        $response = [
+    }
+
+    public function responseToken($user): \Illuminate\Http\JsonResponse
+    {
+        return response()->json([
             'user' => $user,
-            'token' => $token
-        ];
-
-        return response()->json($response, 201);
-
+            'token' => $user->createToken('auth_token')->plainTextToken
+        ], 201);
     }
 
     public function login(Request $request)
     {
-        $attributes = $request->validate([
+        $attribues = $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string'
         ]);
 
-        $user = User::where('email', $attributes['email'])->first();
+        $user = User::where('email', $attribues['email'])->first();
 
-        if(!$user || !Hash::check($attributes['password'], $user->password)) {
+        if (!$user || !Hash::check($attribues['password'], $user->password)) {
             return response([
                 'message' => 'Bad credentials'
             ], 401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-
-        return response()->json($response, 201);
+        return $this->responseToken($user);
 
     }
 

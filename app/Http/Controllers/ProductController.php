@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -62,4 +68,5 @@ class ProductController extends Controller
     {
         return Product::where('name', 'like', '%' . $name . '%')->get();
     }
+
 }
